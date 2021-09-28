@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import Actions from './modules/actions'
+import Actions from '../modules/actions'
 import { useState } from "react";
 // react
 import { 
@@ -10,9 +10,7 @@ import {
 } from 'react-router-dom'
 
 // component
-import Timer from './components/timer'
-import TimerList from './components/timer_list'
-import TimerDetail from './components/timer_detail'
+import Timer from './timer'
 
 // mui
 import Typography from '@material-ui/core/Typography';
@@ -33,7 +31,7 @@ const useStyles = makeStyles({
   }
 });
 
-function App(){
+function TimerList(){
   const history = useHistory();
   const handleLink = path => history.push(path)
   const dispatch = useDispatch();
@@ -51,18 +49,15 @@ function App(){
 
   return (
     <div>
-      <Typography variant="h3" component="h3" className={classes.root}>
-        タイマー作成サイト
-      </Typography>
-      <Switch>
-        <Route path='/' exact component={TimerList} />                    
-        <Route path='/timerdetail/:Timer_id' exact component={TimerDetail} />                    
-        <Route>
-          <p>Not found</p>
-        </Route>
-      </Switch>
+      <TextField label="タイマー名" variant="outlined"  onChange={getTodo} />
+      <Button onClick={addTodo}>追加する</Button>
+      <Grid container spacing={1}>
+        <Grid item xs={5}>
+          <Timer />   
+        </Grid>
+      </Grid>      
     </div>
   )
 }
 
-export default App
+export default TimerList
