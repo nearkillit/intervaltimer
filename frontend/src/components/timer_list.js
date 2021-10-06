@@ -2,9 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Actions from '../modules/actions'
 import { useState } from "react";
 // react
-import { 
-  Switch,
-  Route,  
+import {
   useHistory
   // useParams,  
 } from 'react-router-dom'
@@ -18,6 +16,8 @@ import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
+import ClearIcon from '@material-ui/icons/Clear';
 
 
 // material ui のスタイルの指定https://qiita.com/uehaj/items/969ef20ccef850d2e9b1
@@ -28,33 +28,51 @@ const useStyles = makeStyles({
   },
   cardContents: {
     textAlign: 'center',    
-  }
+  },
+  timer: {
+    position: 'relative',
+  },
+  cancel: {
+    position: 'absolute',
+    top: '0%',
+    left: '80%',
+    zIndex: '2',
+  },
 });
 
 function TimerList(){
-  const history = useHistory();
-  const handleLink = path => history.push(path)
+  // const history = useHistory();
+  // const handleLink = path => history.push(path)
   const dispatch = useDispatch();
   const state = useSelector(state => state)
-  const [todo, setTodo] = useState("")
+  const [timerName, setTimerName] = useState("")
   const classes = useStyles();
 
-  const getTodo = (e) => {
-    setTodo(e.target.value)
+  const getTimerName = (e) => {
+    setTimerName(e.target.value)
   }
 
-  const addTodo = () => {
-    // dispatch(Actions.addTodo({todo}))    
+  const addTimer = () => {
+    dispatch(Actions.addTimer({timerName}))
+  }
+
+  const deleteTimer = (timersId) => {
+    dispatch(Actions.deleteTimer({timersId}))
   }
 
   return (
     <div>
-      <TextField label="タイマー名" variant="outlined"  onChange={getTodo} />
-      <Button onClick={addTodo}>追加する</Button>
+      <TextField label="タイマー名" variant="outlined"  onChange={getTimerName} />
+      <Button onClick={addTimer}>追加する</Button>
       <Grid container spacing={1}>
-        <Grid item xs={5}>
-          <Timer />   
-        </Grid>
+        { state.timers.map((t,i) => (
+          <Grid item xs={4} key={i} className={classes.timer}>
+            <IconButton className={classes.cancel} onClick={ t => deleteTimer(t.id)}>
+              <ClearIcon />
+            </IconButton>
+            <Timer timer={t}/>   
+          </Grid>
+        ))}        
       </Grid>      
     </div>
   )

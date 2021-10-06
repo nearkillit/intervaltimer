@@ -1,31 +1,49 @@
 const Actions = {
-    addTodo(value) {
+    addTimer(value) {
       return {
-        type: 'ADDTODO',
+        type: 'ADD_TIMER',
         value,
       }
     },
-    fixTodo(value) {
+    deleteTimer(value) {
       return {
-        type: 'FIXTODO',
+        type: 'DELETE_TIMER',
         value,
       }
     },
-    updTodo(value) {
+    addIntervalTimer(value) {
       return {
-        type: 'UPDTODO',
+        type: 'ADD_INTERVAL_TIMER',
         value,
       }
     },
-    delTodo(value) {
+    updateIntervalTimer(value) {
       return {
-        type: 'DELTODO',
+        type: 'UPDATE_INTERVAL_TIMER',
         value,
       }
     },
-    fetchTodo(value) {
+    deleteIntervalTimer(value) {
       return {
-        type: 'FETCHTODO',
+        type: 'DELETE_INTERVAL_TIMER',
+        value,
+      }
+    },
+    updateLoop(value) {
+      return {
+        type: 'UPDATE_LOOP',
+        value,
+      }
+    },
+    updateTimerStopFlag(value) {
+      return {
+        type: 'UPDATE_TIMER_STOP_FLAG',
+        value,
+      }
+    },
+    fetchtimer(value) {
+      return {
+        type: 'FETCHtimer',
         value,
       }
     },

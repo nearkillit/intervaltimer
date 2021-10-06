@@ -10,11 +10,15 @@ app_name = 'todo'
 urlpatterns = [
     path('list/', views.TodoListView.as_view(), name='list'),
     # detailはここで指定した<pk>プライマルキーから、レコードを特定してきてくれる
-    # <int:pk>は整数の場合
+    # <int:pk>は整数の場合    
     path('detail/<int:pk>/', views.TodoDetailView.as_view(), name='detail'),
     path('create/', views.TodoCreateView.as_view(), name='create'),
     path('update/<int:pk>/', views.TodoUpdateView.as_view(), name='update'),
     path('delete/<int:pk>/', views.TodoDeleteView.as_view(), name='delete'),
     # r は文字列　^ は〜で始めるの正規表現
-    path('api/', include(apis.router.urls)),
+    path('api/', include(apis.router.urls)),    
+    # timer用
+    path('timer/', views.TimerListView.as_view(), name='timer'),
+    # test用
+    # path('test/', views.SampleView.as_view(), name='test'),
 ]

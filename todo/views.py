@@ -1,7 +1,12 @@
 from django.views import generic
 from django.urls import reverse_lazy
-from .models import Todo
-from .forms import TodoForm
+from .models import TimerTable, Todo
+from .forms import TodoForm, TestForm
+from django.shortcuts import render
+
+# Timerの表示
+class TimerListView(generic.ListView):
+    model = TimerTable
 
 # ToDoの一覧表示機能
 class TodoListView(generic.ListView):
@@ -30,3 +35,38 @@ class TodoUpdateView(generic.UpdateView):
 class TodoDeleteView(generic.DeleteView):
     model = Todo    
     success_url = reverse_lazy('todo:list')
+
+
+# ユーザー取得
+class SampleView(generic.TemplateView):
+    template_name = 'sample.html'
+
+    def __init__(self):
+        self.params = {
+            'title': 'Hello',
+            'message': 'your data',
+            'form': TestForm()            
+        }            
+    
+    # 変数を渡す
+    # https://di-acc2.com/programming/python/5269/
+    # def get_context_data(self,**kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context["test"] = "self.request.user"
+    #     return context
+
+    #get処理
+    def get(self, request, *args, **kwargs):        
+        return render(request, self.template_name, self.params)
+        # return super().get(request, *args, **kwargs)
+
+    #post処理
+    def post(self, request, *args, **kwargs):
+        msg = 'あなたは、&lt;b&gt;' + request.POST['name'] + \
+            '(' + request.POST['age'] + ') &lt;/b&gt; さんです' + \
+            '&lt;br&gt;メールアドレスは&lt;b&gt;' + request.POST['mail'] + '&lt;/b&gt;でござろう。'
+ 
+        self.params['message'] = msg
+        self.params['form'] = TestForm(request.POST)
+        self.params['test'] = str(type(self.request.user))
+        return render(request, self.template_name, self.params)

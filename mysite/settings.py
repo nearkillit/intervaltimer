@@ -37,9 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders', # CORS設定
-    'todo.apps.TodoConfig', # todoアプリケーションの組み込み
-    'rest_framework', # rest API の組み込み
+    'corsheaders',              # CORS設定
+    'todo.apps.TodoConfig',     # todoアプリケーションの組み込み
+    'rest_framework',           # rest API の組み込み
+    'users',
+    'django.contrib.sites',     # ユーザー認証
+    'allauth',                  # ユーザー認証
+    'allauth.account',          # ユーザー認証
+    'allauth.socialaccount',    # ソーシャル連携認証を使っていない場合でも必要    
+    'django_filters', # 追加した
 ]
 
 MIDDLEWARE = [
@@ -51,6 +57,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 ROOT_URLCONF = 'mysite.urls'
@@ -67,6 +78,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # `allauth` needs this from django
+                'django.template.context_processors.request',
             ],
         },
     },
@@ -88,7 +101,7 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'todolist', #　作成したデータベース名
+        'NAME': 'timerlist', #　作成したデータベース名
         'USER': 'root', # ログインユーザー名
         'PASSWORD': 'Nikoniko7^^',
         'HOST': 'localhost',
@@ -144,3 +157,13 @@ CORS_ORIGIN_WHITELIST = [
     'http://127.0.0.1:3000',
 ]
 # CORS_ORIGIN_ALLOW_ALL = False
+
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'rest_framework.authentication.TokenAuthentication',
+#         'rest_framework.authentication.SessionAuthentication',
+#     ),  
+#     'DEFAULT_PERMISSION_CLASSES': (
+#         'rest_framework.permissions.IsAuthenticated',
+#     )   
+# }

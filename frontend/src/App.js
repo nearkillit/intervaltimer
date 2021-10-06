@@ -1,26 +1,18 @@
-import { useSelector, useDispatch } from "react-redux";
-import Actions from './modules/actions'
-import { useState } from "react";
 // react
 import { 
   Switch,
   Route,  
-  useHistory
-  // useParams,  
+  useHistory  
 } from 'react-router-dom'
 
 // component
-import Timer from './components/timer'
 import TimerList from './components/timer_list'
 import TimerDetail from './components/timer_detail'
+import AuthenticationView from './components/authentication_view'
 
 // mui
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Grid from '@material-ui/core/Grid';
-
 
 // material ui のスタイルの指定https://qiita.com/uehaj/items/969ef20ccef850d2e9b1
 // material ui gridの作成　https://qiita.com/vimyum/items/5ba06ca166ebe4992617
@@ -35,28 +27,18 @@ const useStyles = makeStyles({
 
 function App(){
   const history = useHistory();
-  const handleLink = path => history.push(path)
-  const dispatch = useDispatch();
-  const state = useSelector(state => state)
-  const [todo, setTodo] = useState("")
+  const handleLink = path => history.push(path)  
   const classes = useStyles();
 
-  const getTodo = (e) => {
-    setTodo(e.target.value)
-  }
-
-  const addTodo = () => {
-    // dispatch(Actions.addTodo({todo}))    
-  }
-
   return (
-    <div>
-      <Typography variant="h3" component="h3" className={classes.root}>
+    <div className={classes.root}>
+      <Typography variant="h3" component="h3" onClick={()=>handleLink('/')}>
         タイマー作成サイト
       </Typography>
+      <AuthenticationView />
       <Switch>
         <Route path='/' exact component={TimerList} />                    
-        <Route path='/timerdetail/:Timer_id' exact component={TimerDetail} />                    
+        <Route path='/timerdetail/:Timer_id' exact component={TimerDetail} />
         <Route>
           <p>Not found</p>
         </Route>

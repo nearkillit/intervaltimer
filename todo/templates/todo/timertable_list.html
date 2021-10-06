@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block content %}
+  <p>a</p>  
+    {% for item in object_list %}
+      <p>{{ item.user_id }}</p>
+      <p>{{ item.timer_name }}</p>
+    {% endfor %}
+{%endblock%}

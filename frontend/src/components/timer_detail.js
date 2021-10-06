@@ -1,79 +1,41 @@
 // react
-import { 
-    // Switch,
-    // Route,  
-    // useHistory,
-    useParams,  
-  } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
+// component
+import Timer from './timer'
+import TimerView from './timer_view'
+
+// mui
+import Grid from '@material-ui/core/Grid';  
 import Button from '@material-ui/core/Button';
-import ControlPointIcon from '@material-ui/icons/ControlPoint';
 
-const useStyles = makeStyles({
-    root: {    
-      textAlign: 'center'
-    },
-    cardContents: {
-      textAlign: 'center',      
-    }
-  });
-
-function TimerDetail(){
-    const classes = useStyles();
+function TimerDetail(){    
     const {Timer_id} = useParams()
+    const getTimers = useSelector(state => state.timers)    
+    const [timer, setTimer] = useState(getTimers.filter(t => t.id == Timer_id)[0])
+    const history = useHistory();
+    const handleLink = path => history.push(path)  
+
+    useEffect(()=>{      
+      setTimer(getTimers.filter(t => t.id == Timer_id)[0])
+    },[getTimers])
 
     return (
-        <Card className={classes.cardContents}>
-            <CardContent>
-              <Typography variant="h5" component="h5">
-                筋トレ
-              </Typography>
-              <Table>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>1</TableCell>
-                    <TableCell>
-                      <TextField defaultValue="10" 
-                        InputProps={{
-                          endAdornment: 
-                          <InputAdornment position="end">秒</InputAdornment>,
-                      }}/>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>2</TableCell>
-                    <TableCell>
-                      <TextField defaultValue="10" 
-                        InputProps={{
-                          endAdornment: 
-                          <InputAdornment position="end">秒</InputAdornment>,
-                      }}/>
-                    </TableCell>                    
-                  </TableRow>
-                  <TableRow>
-                    <TableCell colSpan="2">
-                      <Button><ControlPointIcon />Add</Button>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-              <Button>スタート</Button>
-            </CardContent>
-          </Card>          
-        )
+      <div>
+        <Button onClick={()=>handleLink('/')}>戻る</Button>
+        <Grid container spacing={1}>        
+          <Grid item xs={4}>
+            <Timer timer={timer} />
+          </Grid>
+          <Grid item xs={8}>
+            <TimerView timer={timer}/>
+          </Grid>
+        </Grid>
+      </div>
+    )
 }
 
 export default TimerDetail
