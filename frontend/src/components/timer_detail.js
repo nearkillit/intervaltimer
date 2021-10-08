@@ -1,39 +1,34 @@
 // react
 import { useParams } from 'react-router-dom'
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
 
 // component
-import Timer from './timer'
+// import Timer from './timer'
 import TimerView from './timer_view'
 
 // mui
-import Grid from '@material-ui/core/Grid';  
-import Button from '@material-ui/core/Button';
+// import Grid from '@material-ui/core/Grid';  
 
 function TimerDetail(){    
     const {Timer_id} = useParams()
     const getTimers = useSelector(state => state.timers)    
-    const [timer, setTimer] = useState(getTimers.filter(t => t.id == Timer_id)[0])
-    const history = useHistory();
-    const handleLink = path => history.push(path)  
+    const [timer, setTimer] = useState(getTimers.filter(t => t.id == Timer_id)[0])   
 
     useEffect(()=>{      
       setTimer(getTimers.filter(t => t.id == Timer_id)[0])
     },[getTimers])
 
     return (
-      <div>
-        <Button onClick={()=>handleLink('/')}>戻る</Button>
-        <Grid container spacing={1}>        
+      <div>        
+        {/* <Grid container spacing={1}>        
           <Grid item xs={4}>
             <Timer timer={timer} />
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={8}> */}
             <TimerView timer={timer}/>
-          </Grid>
-        </Grid>
+          {/* </Grid>
+        </Grid> */}
       </div>
     )
 }

@@ -9,7 +9,16 @@ class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserInfo
         fields='__all__'
-    
+
+class UserTestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserInfo
+        fields=('username','password')
+
+    # def update(self, instance, validated_data):
+    #     print(validated_data)
+    #     return super().update(instance, validated_data)
+
 class TimerInfoSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
     # interval = serializers.ListField()

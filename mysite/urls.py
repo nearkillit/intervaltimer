@@ -4,11 +4,12 @@ from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import TemplateView   
 # 追加
-from users.views import Login
+from users.views import Login, SignUp
 
 urlpatterns = [
     # 追加
-    path('login/', Login.as_view(), name='login'),    
+    path('login/', Login.as_view(), name='login'), 
+    path('signup/', SignUp.as_view(), name='signup'),
     path('', TemplateView.as_view(template_name='home.html'), name='home'),    
     path('todo/', include('todo.urls')),
     path('admin/', admin.site.urls),           

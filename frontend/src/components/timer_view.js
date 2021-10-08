@@ -1,14 +1,10 @@
 // react
-import { useParams } from 'react-router-dom'
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Actions from '../modules/actions'
-// component
-import Timer from './timer'
 
 // mui
-import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
@@ -32,7 +28,7 @@ const useStyles = makeStyles({
 function TimerView(props){
     const dispatch = useDispatch();
     const classes = useStyles();    
-    const state = useSelector(state => state)
+    // const state = useSelector(state => state)
     const [start, setStart] = useState(-1)    
     const [stop, setStop] = useState(false)
     const [timeCountDown, setTimeCountDown] = useState('')
@@ -41,12 +37,14 @@ function TimerView(props){
     const [intervalTimer, setIntervalTimer] = useState(getTimer.interval.concat())
     const [loop, setLoop] = useState(getTimer.loop)
     const [endTimer, setEndTimer] = useState(false)
-    const intervalTimerOrigin = getTimer.interval.concat()
+    const intervalTimerOrigin = getTimer.interval.concat()    
     let countDownTimer
+    const audioIntervalNext = new Audio(`${process.env.PUBLIC_URL}/se/ホイッスル・単発.mp3`)
+    const audioIntervalEnd = new Audio(`${process.env.PUBLIC_URL}/se/ホイッスル・連続.mp3`)
 
-    const countDown = () => {
+    const countDown = () => {      
       let getStart = start
-      if(getStart === -1){
+      if(getStart === -1){        
           setStart(0)
           getStart = 0
       }
@@ -56,10 +54,11 @@ function TimerView(props){
       intervalTimer[getStart] -= 1
       
       // 次のインターバルタイマーへ
-      if(newIntervalTimer[getStart] < 0){        
+      if(newIntervalTimer[getStart] < 0){             
         setStart(start => start + 1)
         setIntervalTimer(() => intervalTimerOrigin.concat())
-        setIntervalCountUp(true)
+        setIntervalCountUp(true)        
+        audioIntervalNext.play().catch(err => console.log(err))
       }
       // 次に行かない場合
       else{        
@@ -70,8 +69,10 @@ function TimerView(props){
     // timer関連
     const timerStart = () => {
       setStop(false)
-      dispatch(Actions.updateTimerStopFlag(false))
-      setStart(start => start + 1)      
+      setEndTimer(false)
+      setIntervalCountUp(false)
+      dispatch(Actions.updateTimerStopFlag(false))      
+      setStart(0)      
       timerCountDown()      
     }
 
@@ -83,11 +84,12 @@ function TimerView(props){
 
     const timerRestart = () => {
       timerCountDown()
+      setEndTimer(false)
     }
 
     const timerReset = () => {
         timerStop()
-        //　初期値
+        //　初期値        
         setStart(-1)
         setLoop(getTimer.loop)
         setIntervalTimer(() => intervalTimerOrigin.concat())
@@ -115,20 +117,26 @@ function TimerView(props){
       if(start >= intervalTimer.length){        
         setStart(0)
         setLoop(loop => loop -1)
-        if(loop < 1){
+        if(loop < 1){          
           setEndTimer(true)
           timerReset()
         }
       }      
     },[start])
 
-    useEffect(()=>{
+    useEffect(()=>{      
       if(intervalCountUp && !endTimer){
         setIntervalCountUp(false)
         timerStop()
-        timerCountDown()
+        timerCountDown()        
       }
     },[intervalCountUp])
+    
+    useEffect(()=>{
+      if(endTimer){
+        audioIntervalEnd.play().catch(err => console.log(err))        
+      }
+    },[endTimer])
 
     return (
         <div>          
@@ -143,9 +151,11 @@ function TimerView(props){
             </Typography>
             )}          
           {endTimer ? 
+            <>
             <Typography variant="h5" component="h5" >
               終了！
-            </Typography>
+            </Typography>            
+            </>
             :
             <Typography variant="h5" component="h5" >
               あと{loop}周

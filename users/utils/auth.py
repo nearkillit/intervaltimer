@@ -11,13 +11,16 @@ from django.http import QueryDict
 
 class NormalAuthentication(BaseAuthentication):
     def authenticate(self, request):        
-        if request.method == "PUT":            
-            username = QueryDict(request._request.body)["username"]
-            password = QueryDict(request._request.body)["password"]            
-        elif request.method == "POST":
-            username = request._request.POST.get("username")
-            password = request._request.POST.get("password")
-
+        if request.method == "PUT":
+            username = request.data["username"]
+            password = request.data["password"]
+            # username = QueryDict(request._request.body)["username"]
+            # password = QueryDict(request._request.body)["password"]            
+        elif request.method == "POST":            
+            username = request.data["username"]
+            password = request.data["password"]
+            # username = request._request.POST.get("username")
+            # password = request._request.POST.get("password")                    
         # PUTの場合 
         # print(QueryDict(request._request.body)) 
         # filter https://yu-nix.com/blog/2020/11/28/django-filter/ 
@@ -33,11 +36,30 @@ class NormalAuthentication(BaseAuthentication):
         # username = たかし
         # user_timer = [{ id:6, timer_name:"筋トレ", user:1 }, { id:7, timer_name:"ヒート", user:1 }]
         # user_interval = [ { id:1, interval_order:1, interval_second:90, timer:6 }, ...]        
-        token = generate_jwt(user_obj, user_timer, user_interval)
+        token = generate_data(user_obj, user_timer, user_interval)
         return (token, None)
 
     def authenticate_header(self, request):
         pass
+
+def generate_data(user, timer, interval):
+    timestamp = int(time.time()) + 60*60*24*7
+    timers = list(range(len(timer)))
+    timerinterval = []
+    for index, t in enumerate(timer):
+        for itv in interval:
+            if itv["timer_id"] == t.id: 
+                _timerinterval = itv["interval"]
+                timerinterval = list(range(len(_timerinterval)))
+                for titv in _timerinterval:                                        
+                    timerinterval[titv.interval_order - 1] = titv.interval_second                
+        timers[index] = { "id": t.id, 
+                          "name": t.timer_name, 
+                          "interval": timerinterval }    
+    return {"userid": user.pk, 
+         "username": user.username, 
+         "exp": timestamp,
+         "timers": timers,}
 
 # 先程インストールしたjwtライブラリでTokenを生成します
 # Tokenの内容はユーザーの情報とタイムアウトが含まれてます

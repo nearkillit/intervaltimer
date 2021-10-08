@@ -41,12 +41,28 @@ const Actions = {
         value,
       }
     },
-    fetchtimer(value) {
+    fetchTimer(value) {
       return {
-        type: 'FETCHtimer',
+        type: 'FETCH_TIMER',
         value,
       }
     },
+    resetTimer() {
+      return {
+        type: 'RESET_TIMER',
+      }
+    },
+    fetchUser(value) {
+      return {
+        type: 'FETCH_USER',
+        value,
+      }
+    },
+    deleteUser() {
+      return {
+        type: 'DELETE_USER',        
+      }
+    },    
   }
   
   export default Actions

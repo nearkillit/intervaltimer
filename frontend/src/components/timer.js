@@ -1,30 +1,24 @@
+// react
+import { useDispatch } from "react-redux";
+import Actions from '../modules/actions'
+import { Switch, Route, useHistory } from 'react-router-dom'
+import Blind from './timer_blind'
+// mui
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+// mui icon
 import IconButton from '@material-ui/core/IconButton';
 import ControlPointIcon from '@material-ui/icons/ControlPoint';
-import ClearIcon from '@material-ui/icons/Clear';
 import CancelIcon from '@material-ui/icons/Cancel';
-
-import { useSelector, useDispatch } from "react-redux";
-import Actions from '../modules/actions'
-import {
-  useHistory
-  // useParams,
-} from 'react-router-dom'
-
-import Blind from './timer_blind'
 
 const useStyles = makeStyles({
     root: {    
@@ -32,8 +26,13 @@ const useStyles = makeStyles({
     },
     cardContents: {
       textAlign: 'center',
-      position: 'relative',      
-    },    
+      position: 'relative',
+      backgroundColor: '#f0ffff',
+      // color: '#fff',
+    },
+    cardTitle: {      
+      // backgroundColor: '#e0ffff',      
+    },
     add: {
       fontSize: '80%',      
     }
@@ -44,7 +43,7 @@ function Timer (props){
     const dispatch = useDispatch();
     const timersId = props.timer.id
     const history = useHistory();
-    const handleLink = path => history.push(path)    
+    const handleLink = path => history.push(path)            
 
     const inputIntervalTime = (event) => {
       const intervalTime = event.target.value.replace(/\D/g, '')
@@ -57,8 +56,7 @@ function Timer (props){
       dispatch(Actions.addIntervalTimer({timersId}))
     }
 
-    const deleteIntervalTimer = (index) => {
-      console.log(index);
+    const deleteIntervalTimer = (index) => {      
       dispatch(Actions.deleteIntervalTimer({index, timersId}))
     }
 
@@ -72,7 +70,7 @@ function Timer (props){
         <Card className={classes.cardContents}>
             <CardContent>
               <Blind />
-              <Typography variant="h5" component="h5">
+              <Typography variant="h5" component="h5" className={classes.cardTitle}>
                 {props.timer.name}
               </Typography>              
               <Table>
@@ -95,9 +93,13 @@ function Timer (props){
                   <TableRow>
                     <TableCell></TableCell>
                     <TableCell>
-                      <Button onClick={addIntervalTimer} className={classes.add}>
-                        <ControlPointIcon />追加
-                      </Button>
+                      {props.timer.interval.length < 9 ?
+                        <Button onClick={addIntervalTimer} className={classes.add}>
+                          <ControlPointIcon />追加
+                        </Button>
+                        :
+                        <span>9つ以上は作成できません</span>
+                      }                      
                     </TableCell>
                     <TableCell></TableCell>
                   </TableRow>
@@ -110,7 +112,13 @@ function Timer (props){
                             endAdornment:
                             <InputAdornment position="end">回繰り返す</InputAdornment>
                         }}/>
-              <Button onClick={()=>handleLink('/timerdetail/' + timersId)}>スタート</Button>
+              <p>
+                <Switch>
+                  <Route path='/' exact>
+                    <Button onClick={()=>handleLink('/timerdetail/' + timersId)}>スタート</Button>
+                  </Route>
+                </Switch>
+              </p>
             </CardContent>
           </Card>          
         )

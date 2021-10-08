@@ -1,20 +1,43 @@
+import { compose, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import persistState from "redux-localstorage";
+import { createStore } from 'redux';
+
 // 初期State
 const initialState = {    
-        user:0,        
+        user:0,
+        username:'',
+        pasword:'',
         timers:[
           {
-            id:0,
-            name:'筋トレ',            
+            id:2,
+            name:'筋トレ',
             interval:[3,3,3],
             loop:0
           }
         ],
-        timerStopFlag: true     
+        timerStopFlag: true,             
   }
 
   // Reducer処理
   const reducer = (state = initialState, action) => {
     switch (action.type) {
+      case 'FETCH_USER': {
+        const user = action.value.user
+        const username = action.value.username
+        const password = action.value.password
+        return {...state, username, password, user }
+      }
+      case 'DELETE_USER': {
+        const user = 0
+        const username = ''
+        const password = ''
+        return {...state, user, username, password }
+      }
+      case 'FETCH_TIMER': {        
+        const timers = action.value.data.timers.map( t  => { return { ...t, loop:0 } })        
+        return {...state, user:action.value.data.userid, timers }
+      }
       case 'ADD_TIMER': {
         const initialTimer = { 
           id:0,
@@ -26,13 +49,19 @@ const initialState = {
         const newTimers = state.timers
         newTimer.name = action.value.timerName  
         // idの付与
-        newTimer.id = newTimers.reduce((p,c) => p > c.id ? p : c.id , 0) + 1
+        newTimer.id = newTimers.reduce((p,c) => p > c.id ? p : c.id , 1) + 1
+        newTimer.instanceId = 1
         newTimers.push(newTimer)             
         return { ...state, timers: newTimers }
       }
       case 'DELETE_TIMER': {        
         const newTimers = state.timers.filter(t => t.id !== action.value.timersId)
         return { ...state, timers: newTimers }
+      }
+      case 'RESET_TIMER': {
+        const resetTimers = state.timers.map(t =>{ return {...t, instanceId:1}})
+        console.log(resetTimers);
+        return { ...state, timers: resetTimers }
       }
       case 'ADD_INTERVAL_TIMER': {        
         const getTimers = state.timers
@@ -70,5 +99,12 @@ const initialState = {
       }
     }
   }
-  
-  export default reducer
+
+const enhancer = compose(persistState(['timers','timerStopFlag'], { key: 'user' }),applyMiddleware(thunk));
+
+const store = createStore(reducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__() ,
+  enhancer
+)
+
+export default store

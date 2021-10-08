@@ -1,17 +1,12 @@
+// react
 import { useSelector, useDispatch } from "react-redux";
 import Actions from '../modules/actions'
 import { useState } from "react";
-// react
-import {
-  useHistory
-  // useParams,  
-} from 'react-router-dom'
 
 // component
 import Timer from './timer'
 
 // mui
-import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -41,8 +36,6 @@ const useStyles = makeStyles({
 });
 
 function TimerList(){
-  // const history = useHistory();
-  // const handleLink = path => history.push(path)
   const dispatch = useDispatch();
   const state = useSelector(state => state)
   const [timerName, setTimerName] = useState("")
@@ -56,18 +49,24 @@ function TimerList(){
     dispatch(Actions.addTimer({timerName}))
   }
 
-  const deleteTimer = (timersId) => {
+  const deleteTimer = (timersId) => {    
     dispatch(Actions.deleteTimer({timersId}))
   }
 
   return (
     <div>
-      <TextField label="タイマー名" variant="outlined"  onChange={getTimerName} />
-      <Button onClick={addTimer}>追加する</Button>
+      {state.timers.length < 9 ?
+        <>
+          <TextField label="タイマー名" variant="outlined" inputProps={{ maxLength: "16" }} onChange={getTimerName} />
+          <Button onClick={addTimer}>追加する</Button>
+        </>
+        :
+        <span>10つ以上のタイマーの作成にはプレミアムプランが必要です</span>
+      }      
       <Grid container spacing={1}>
         { state.timers.map((t,i) => (
           <Grid item xs={4} key={i} className={classes.timer}>
-            <IconButton className={classes.cancel} onClick={ t => deleteTimer(t.id)}>
+            <IconButton className={classes.cancel} onClick={ () => deleteTimer(t.id)}>
               <ClearIcon />
             </IconButton>
             <Timer timer={t}/>   
